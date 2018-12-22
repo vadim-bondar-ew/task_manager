@@ -1,0 +1,47 @@
+version: "2"
+services:
+  web:
+    build: .
+    command: >
+      bundle exec rails s -p 3000 -b '0.0.0.0'
+    environment:
+      DB_USER: taskmanager
+      DB_PWD: taskmanager
+      DB_HOST: db
+      DB_HOST_TEST: db2
+      DB_PORT: 3306
+      DB_NAME_DEV: taskmanager_development
+      DB_NAME_TEST: taskmanager_test
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    links:
+      - db
+      - db2
+    networks:
+      - default
+
+  db:
+    image: mysql:5.7
+    ports:
+      - "3398:3306"
+    expose:
+      - "3398"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: taskmanager_development
+      MYSQL_USER: taskmanager
+      MYSQL_PASSWORD: taskmanager
+
+  db2:
+      image: mysql:5.7
+      ports:
+        - "3399:3306"
+      expose:
+        - "3399"
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: taskmanager_test
+        MYSQL_USER: taskmanager
+        MYSQL_PASSWORD: taskmanager
